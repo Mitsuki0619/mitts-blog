@@ -1,0 +1,47 @@
+---
+import type { Blog } from "../types/microcms";
+import { formatDate } from "../utils/date";
+
+interface Props {
+  blog: Blog;
+}
+
+const { blog } = Astro.props;
+---
+
+<article
+  class="bg-white sm:h-[170px] dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+>
+  <a href={`/blog/${blog.id}`} class="flex h-full">
+    <div
+      class="w-28 sm:w-42 flex-shrink-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-4xl sm:text-5xl"
+    >
+      {blog.emoji}
+    </div>
+    <div class="flex-1 p-4 flex flex-col justify-between">
+      <div class="flex items-center gap-2 mb-2">
+        <span
+          class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300"
+        >
+          {blog.category.name}
+        </span>
+        <time
+          datetime={blog.publishedAt}
+          class="text-sm text-gray-500 dark:text-gray-400"
+        >
+          {formatDate(new Date(blog.publishedAt!))}
+        </time>
+      </div>
+      <h2 class="text-lg sm:text-2xl font-bold mb-2 line-clamp-2">{blog.title}</h2>
+      <div class="flex flex-wrap gap-1 mt-2">
+        {
+          blog.tags.map((tag) => (
+            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
+              {tag.name}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </a>
+</article>

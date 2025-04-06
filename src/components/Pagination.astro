@@ -1,0 +1,141 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+}
+
+const { currentPage, totalPages, basePath } = Astro.props;
+
+// Generate page numbers with ellipsis for large page counts
+function generatePagination(current: number, total: number) {
+  const pages = [];
+
+  if (total <= 7) {
+    // Show all pages if total is 7 or less
+    for (let i = 1; i <= total; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Always show first page
+    pages.push(1);
+
+    // Calculate start and end of middle section
+    let startPage = Math.max(2, current - 1);
+    let endPage = Math.min(total - 1, current + 1);
+
+    // Adjust if current is near the beginning
+    if (current <= 3) {
+      endPage = 4;
+    }
+
+    // Adjust if current is near the end
+    if (current >= total - 2) {
+      startPage = total - 3;
+    }
+
+    // Add ellipsis after first page if needed
+    if (startPage > 2) {
+      pages.push("...");
+    }
+
+    // Add middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    // Add ellipsis before last page if needed
+    if (endPage < total - 1) {
+      pages.push("...");
+    }
+
+    // Always show last page
+    pages.push(total);
+  }
+
+  return pages;
+}
+
+const pages = generatePagination(currentPage, totalPages);
+---
+
+<nav aria-label="Pagination" class="flex justify-center mt-8">
+  <ul class="flex items-center gap-1">
+    <!-- Previous button -->
+    {
+      currentPage > 1 && (
+        <li>
+          <a
+            href={`${basePath}/${currentPage - 1}`}
+            class="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Previous page"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </li>
+      )
+    }
+
+    <!-- Page numbers -->
+    {
+      pages.map((page) => (
+        <li>
+          {typeof page === "number" ? (
+            <a
+              href={`${basePath}/${page}`}
+              class={`px-4 py-2 rounded-md ${
+                currentPage === page
+                  ? "bg-primary-600 text-white"
+                  : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+              } transition-colors`}
+              aria-current={currentPage === page ? "page" : undefined}
+            >
+              {page}
+            </a>
+          ) : (
+            <span class="px-4 py-2 text-gray-500 dark:text-gray-400">
+              {page}
+            </span>
+          )}
+        </li>
+      ))
+    }
+
+    <!-- Next button -->
+    {
+      currentPage < totalPages && (
+        <li>
+          <a
+            href={`${basePath}/${currentPage + 1}`}
+            class="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Next page"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </li>
+      )
+    }
+  </ul>
+</nav>

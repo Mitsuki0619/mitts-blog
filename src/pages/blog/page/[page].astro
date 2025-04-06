@@ -1,8 +1,8 @@
 ---
-import BlogCard from "../components/BlogCard.astro";
-import Pagination from "../components/Pagination.astro";
-import Layout from "../layouts/Layout.astro";
-import { getBlogs } from "../lib/microcms";
+import Layout from "../../../layouts/Layout.astro";
+import BlogCard from "../../../components/BlogCard.astro";
+import Pagination from "../../../components/Pagination.astro";
+import { getBlogs } from "../../../lib/microcms";
 
 export async function getStaticPaths() {
   const { totalCount } = await getBlogs({ limit: 1 });
